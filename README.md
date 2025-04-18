@@ -1,9 +1,12 @@
 # Personal Expense Tracker
 
-A full-stack web application for tracking personal income and expenses, categorizing transactions, and viewing financial summaries.
+A full-stack web application for tracking personal income and expenses, categorizing transactions, and viewing financial summaries with user authentication.
 
 ## Features
 
+- User authentication (register, login, logout)
+- Secure password hashing and JWT token-based authentication
+- User-specific data isolation for privacy and security
 - Track income and expenses
 - Categorize transactions
 - View summary reports (total income, total expenses, balance)
@@ -12,9 +15,10 @@ A full-stack web application for tracking personal income and expenses, categori
 
 ## Tech Stack
 
-- **Frontend**: React with Vite, Tailwind CSS, Chart.js
-- **Backend**: Flask, SQLAlchemy
-- **Database**: SQLite
+- **Frontend**: React with Vite, Tailwind CSS, Chart.js, React Router
+- **Backend**: Flask, SQLAlchemy, JWT Authentication
+- **Database**: SQLite (development), PostgreSQL (production)
+- **Deployment**: Render (backend), Vercel (frontend)
 
 ## Project Structure
 
@@ -88,7 +92,16 @@ The frontend application will be available at http://localhost:3000.
 
 1. Start both the backend and frontend servers
 2. Open http://localhost:3000 in your browser
-3. Use the navigation menu to access different sections:
+3. Register a new account or login with existing credentials
+4. Use the navigation menu to access different sections:
    - Dashboard: View financial overview and charts
    - Transactions: Add, view, and delete transactions
    - Categories: Add and view income/expense categories
+
+## Deployment
+
+The application is configured for deployment on:
+- **Backend**: Render (with PostgreSQL database)
+- **Frontend**: Vercel
+
+Environment variables are used for configuration in both environments.

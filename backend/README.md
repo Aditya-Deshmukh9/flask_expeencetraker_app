@@ -1,6 +1,6 @@
 # Personal Expense Tracker - Backend
 
-This is the Flask backend for the Personal Expense Tracker application.
+This is the Flask backend for the Personal Expense Tracker application with JWT-based authentication and user-specific data management.
 
 ## Setup Instructions
 
@@ -25,11 +25,69 @@ This is the Flask backend for the Personal Expense Tracker application.
 
 The server will start at http://localhost:5000.
 
+## Environment Variables
+
+Create a `.env` file in the backend directory with the following variables:
+
+```
+# Flask application settings
+FLASK_APP=app.py
+FLASK_ENV=development  # Change to production for deployment
+PORT=5000
+DEBUG=True  # Set to False in production
+
+# Database settings
+DATABASE_URL=sqlite:///expense_tracker.db  # For production, use PostgreSQL
+
+# CORS settings
+FRONTEND_URL=http://localhost:3000  # URL of the frontend application
+
+# JWT settings
+JWT_SECRET=your-secret-key  # Change this to a secure random string
+```
+
+## Database Migration
+
+If you need to migrate the database to add the user_id column to existing transactions:
+
+```
+python migrate_db.py
+```
+
 ## API Endpoints
 
+### Authentication Endpoints
+
+- `POST /api/auth/register` - Register a new user
+  - Request body: `{ "username": "user", "email": "user@example.com", "password": "password" }`
+  - Response: `{ "message": "User registered successfully", "token": "jwt-token", "user": {...} }`
+
+- `POST /api/auth/login` - Login a user
+  - Request body: `{ "login": "username or email", "password": "password" }`
+  - Response: `{ "message": "Login successful", "token": "jwt-token", "user": {...} }`
+
+- `GET /api/auth/me` - Get current user profile (requires authentication)
+  - Headers: `{ "Authorization": "Bearer jwt-token" }`
+  - Response: `{ "user": {...} }`
+
+### Protected Endpoints (require authentication)
+
 - `GET /api/categories` - Get all categories
+  - Headers: `{ "Authorization": "Bearer jwt-token" }`
+
 - `POST /api/categories` - Create a new category
-- `GET /api/transactions` - Get all transactions
-- `POST /api/transactions` - Create a new transaction
+  - Headers: `{ "Authorization": "Bearer jwt-token" }`
+  - Request body: `{ "name": "Category Name", "type": "income|expense" }`
+
+- `GET /api/transactions` - Get all transactions for the current user
+  - Headers: `{ "Authorization": "Bearer jwt-token" }`
+
+- `POST /api/transactions` - Create a new transaction for the current user
+  - Headers: `{ "Authorization": "Bearer jwt-token" }`
+  - Request body: `{ "amount": 100, "description": "Description", "type": "income|expense", "category_id": 1, "date": "2023-01-01T00:00:00" }`
+
 - `DELETE /api/transactions/<id>` - Delete a transaction
-- `GET /api/summary` - Get summary statistics
+  - Headers: `{ "Authorization": "Bearer jwt-token" }`
+
+- `GET /api/summary` - Get summary statistics for the current user
+  - Headers: `{ "Authorization": "Bearer jwt-token" }`
