@@ -1,12 +1,20 @@
 from flask_sqlalchemy import SQLAlchemy
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Initialize SQLAlchemy instance
 db = SQLAlchemy()
 
 def init_db(app):
     """Initialize the database with the Flask app"""
-    # Configure SQLite database
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///expense_tracker.db'
+    # Get database URL from environment variable or use default SQLite
+    database_url = os.environ.get('DATABASE_URL', 'sqlite:///expense_tracker.db')
+    
+    # Configure database
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
     # Initialize the app with the extension
