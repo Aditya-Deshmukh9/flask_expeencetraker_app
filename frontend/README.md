@@ -4,12 +4,24 @@ This is the React frontend for the Personal Expense Tracker application with use
 
 ## Setup Instructions
 
-1. Install dependencies:
+1. Create a `.env` file in the frontend directory with the following variables:
+
+   ```
+   # API URL for backend connection
+   VITE_API_URL=http://localhost:5000/api
+
+   # Environment
+   VITE_NODE_ENV=development
+   ```
+
+2. Install dependencies:
+
    ```
    pnpm install
    ```
 
-2. Start the development server:
+3. Start the development server:
+
    ```
    pnpm dev
    ```
@@ -52,21 +64,30 @@ VITE_NODE_ENV=development
 ## Project Structure
 
 ```
-src/
-├── components/        # Reusable UI components
-│   ├── Navbar.jsx     # Navigation bar with auth state
-│   └── ProtectedRoute.jsx # Route protection component
-├── context/           # React Context providers
-│   ├── AuthContext.jsx    # Authentication state management
-│   └── TransactionContext.jsx # Transaction data management
-├── pages/             # Application pages
-│   ├── Dashboard.jsx  # Financial overview
-│   ├── Transactions.jsx # Transaction management
-│   ├── Categories.jsx # Category management
-│   ├── Login.jsx      # User login page
-│   └── Register.jsx   # User registration page
-├── App.jsx           # Main application component
-└── main.jsx          # Application entry point
+frontend/
+├── src/                 # Source code
+│   ├── components/      # Reusable UI components
+│   │   ├── Navbar.jsx   # Navigation bar with auth state
+│   │   └── ProtectedRoute.jsx # Route protection component
+│   ├── context/         # React Context providers
+│   │   ├── AuthContext.jsx # Authentication state management
+│   │   └── TransactionContext.jsx # Transaction data management
+│   ├── pages/           # Application pages
+│   │   ├── Dashboard.jsx # Financial overview
+│   │   ├── Transactions.jsx # Transaction management
+│   │   ├── Categories.jsx # Category management
+│   │   ├── Login.jsx    # User login page
+│   │   └── Register.jsx # User registration page
+│   ├── App.jsx          # Main application component
+│   └── main.jsx         # Application entry point
+├── public/              # Static assets
+├── .env                 # Environment variables (not in version control)
+├── .env.example         # Example environment variables
+├── index.html           # HTML entry point
+├── package.json         # Frontend dependencies
+├── vite.config.js       # Vite configuration
+├── tailwind.config.js   # Tailwind CSS configuration
+└── postcss.config.js    # PostCSS configuration for Tailwind
 ```
 
 ## Authentication Flow
@@ -76,3 +97,19 @@ src/
 3. AuthContext provides authentication state throughout the app
 4. ProtectedRoute component prevents access to private routes
 5. API requests include authentication headers for protected endpoints
+
+## Deployment
+
+The frontend is configured for deployment on Vercel. To deploy:
+
+1. Push your code to a GitHub repository
+2. Connect the repository to Vercel
+3. Configure the following environment variables in Vercel:
+   - `VITE_API_URL`: URL of your backend API (e.g., https://your-backend.onrender.com/api)
+   - `VITE_NODE_ENV`: Set to `production`
+
+## Available Scripts
+
+- `pnpm dev` - Start the development server
+- `pnpm build` - Build the application for production
+- `pnpm preview` - Preview the production build locally
