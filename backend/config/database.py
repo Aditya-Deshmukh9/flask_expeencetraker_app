@@ -23,6 +23,7 @@ def init_db(app):
     # Import models to ensure they are registered with SQLAlchemy
     from models.category import Category
     from models.transaction import Transaction
+    from models.user import User
     
     # Create database and tables
     with app.app_context():

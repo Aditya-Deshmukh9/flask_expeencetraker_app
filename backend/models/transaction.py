@@ -9,6 +9,7 @@ class Transaction(db.Model):
     type = db.Column(db.String(10), nullable=False)  # 'income' or 'expense'
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
     category = db.relationship('Category', backref=db.backref('transactions', lazy=True))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     def to_dict(self):
         return {
@@ -18,5 +19,6 @@ class Transaction(db.Model):
             'date': self.date.isoformat(),
             'type': self.type,
             'category_id': self.category_id,
-            'category_name': self.category.name
+            'category_name': self.category.name,
+            'user_id': self.user_id
         }

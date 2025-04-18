@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useAuth } from "./AuthContext";
 
 const TransactionContext = createContext();
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000"; // fallback if env is missing
@@ -10,6 +11,7 @@ export function useTransactions() {
 }
 
 export function TransactionProvider({ children }) {
+  const { token, isAuthenticated } = useAuth();
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([]);
   const [summary, setSummary] = useState({
@@ -19,12 +21,18 @@ export function TransactionProvider({ children }) {
     category_spending: [],
   });
   const [loading, setLoading] = useState(true);
+  
+  // Create headers with authentication token
+  const authHeaders = {
+    headers: token ? { Authorization: `Bearer ${token}` } : {}
+  };
 
   // Fetch all transactions
   const fetchTransactions = async () => {
+    if (!isAuthenticated) return;
     try {
       setLoading(true);
-      const response = await axios.get(`${API_URL}/transactions`);
+      const response = await axios.get(`${API_URL}/transactions`, authHeaders);
       setTransactions(response.data);
       setLoading(false);
     } catch (error) {
@@ -36,8 +44,9 @@ export function TransactionProvider({ children }) {
 
   // Fetch all categories
   const fetchCategories = async () => {
+    if (!isAuthenticated) return;
     try {
-      const response = await axios.get(`${API_URL}/categories`);
+      const response = await axios.get(`${API_URL}/categories`, authHeaders);
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -47,8 +56,9 @@ export function TransactionProvider({ children }) {
 
   // Fetch summary data
   const fetchSummary = async () => {
+    if (!isAuthenticated) return;
     try {
-      const response = await axios.get(`${API_URL}/summary`);
+      const response = await axios.get(`${API_URL}/summary`, authHeaders);
       setSummary(response.data);
     } catch (error) {
       console.error("Error fetching summary:", error);
@@ -61,7 +71,8 @@ export function TransactionProvider({ children }) {
     try {
       const response = await axios.post(
         `${API_URL}/transactions`,
-        transactionData
+        transactionData,
+        authHeaders
       );
       setTransactions([response.data, ...transactions]);
       fetchSummary(); // Update summary after adding transaction
@@ -77,7 +88,7 @@ export function TransactionProvider({ children }) {
   // Delete a transaction
   const deleteTransaction = async (id) => {
     try {
-      await axios.delete(`${API_URL}/transactions/${id}`);
+      await axios.delete(`${API_URL}/transactions/${id}`, authHeaders);
       setTransactions(
         transactions.filter((transaction) => transaction.id !== id)
       );
@@ -92,7 +103,7 @@ export function TransactionProvider({ children }) {
   // Add a new category
   const addCategory = async (categoryData) => {
     try {
-      const response = await axios.post(`${API_URL}/categories`, categoryData);
+      const response = await axios.post(`${API_URL}/categories`, categoryData, authHeaders);
       setCategories([...categories, response.data]);
       toast.success("Category added successfully");
       return response.data;
@@ -103,12 +114,14 @@ export function TransactionProvider({ children }) {
     }
   };
 
-  // Load initial data
+  // Load initial data when authenticated
   useEffect(() => {
-    fetchTransactions();
-    fetchCategories();
-    fetchSummary();
-  }, []);
+    if (isAuthenticated) {
+      fetchTransactions();
+      fetchCategories();
+      fetchSummary();
+    }
+  }, [isAuthenticated, token]);
 
   const value = {
     transactions,
